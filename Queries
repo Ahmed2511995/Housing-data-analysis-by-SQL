@@ -22,8 +22,22 @@ ADD PropertySplitAddress NVARCHAR(255),
     PropertySplitCity NVARCHAR(255);
 
 UPDATE NashvilleHousing
-SET PropertySplitAddress = SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress)-1),
-    PropertySplitCity = SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress)+1, LEN(PropertyAddress));
+SET 
+    PropertySplitAddress = 
+        CASE 
+            WHEN PropertyAddress IS NOT NULL 
+                 AND CHARINDEX(',', PropertyAddress) > 0
+            THEN TRIM(SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) - 1))
+            ELSE NULL
+        END,
+
+    PropertySplitCity =
+        CASE 
+            WHEN PropertyAddress IS NOT NULL 
+                 AND CHARINDEX(',', PropertyAddress) > 0
+            THEN TRIM(SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) + 1, LEN(PropertyAddress)))
+            ELSE NULL
+        END;
 
 
 -- 4. Split Owner Address
